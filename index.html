@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cookie + Session Monitor</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 450px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 40px 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .header h2 {
+      font-size: 28px;
+      color: #2d3748;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .header p {
+      color: #718096;
+      font-size: 14px;
+    }
+
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 20px;
+      box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+    }
+
+    .input-group {
+      margin-bottom: 24px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #4a5568;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: #f7fafc;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 12px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+
+    .btn-secondary:hover {
+      background: #667eea;
+      color: #fff;
+    }
+
+    .btn-danger {
+      background: #fff;
+      color: #e53e3e;
+      border: 2px solid #e53e3e;
+    }
+
+    .btn-danger:hover {
+      background: #e53e3e;
+      color: #fff;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #f7fafc, #edf2f7);
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .stat-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .activity-card {
+      background: linear-gradient(135deg, #fff5f5, #fed7d7);
+      padding: 16px;
+      border-radius: 12px;
+      margin-top: 16px;
+      border-left: 4px solid #e53e3e;
+    }
+
+    .activity-card .label {
+      font-size: 12px;
+      color: #742a2a;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .activity-card .value {
+      font-size: 16px;
+      color: #2d3748;
+      font-weight: 600;
+    }
+
+    .welcome-name {
+      font-size: 32px;
+      font-weight: 700;
+      color: #2d3748;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .welcome-subtitle {
+      text-align: center;
+      color: #718096;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 32px 24px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Form nhập tên -->
+  <div id="form">
+    <div class="header">
+      <div class="avatar">👤</div>
+      <h2>Chào mừng bạn!</h2>
+      <p>Vui lòng nhập tên để bắt đầu</p>
+    </div>
+
+    <div class="input-group">
+      <label for="usernameInput">Tên của bạn</label>
+      <input 
+        id="usernameInput" 
+        type="text"
+        placeholder="Nhập tên của bạn..."
+        autocomplete="off"
+      >
+    </div>
+
+    <button class="btn btn-primary" onclick="saveCookie()">
+      ✨ Bắt đầu
+    </button>
+  </div>
+
+  <!-- Màn hình chào mừng -->
+  <div id="welcome" style="display:none">
+    <div class="header">
+      <div class="avatar">🎉</div>
+      <div class="welcome-name" id="greeting"></div>
+      <p class="welcome-subtitle">Chúc bạn có trải nghiệm tuyệt vời!</p>
+    </div>
+
+    <button class="btn btn-secondary" onclick="updateCookie()">
+      ✏️ Cập nhật tên
+    </button>
+    <button class="btn btn-danger" onclick="deleteCookie()">
+      🗑️ Xóa thông tin
+    </button>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-value" id="duration">0</div>
+        <div class="stat-label">Giây</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">📄</div>
+        <div class="stat-value" id="views">0</div>
+        <div class="stat-label">Lượt xem</div>
+      </div>
+    </div>
+
+    <div class="activity-card">
+      <div class="label">🕒 Tương tác cuối cùng</div>
+      <div class="value" id="lastActive">--:--:--</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + days * 86400000);
+    document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/`;
+  }
+
+  function getCookie(name) {
+    const cookies = document.cookie.split("; ");
+    for (let c of cookies) {
+      const [k, v] = c.split("=");
+      if (k === name) return v;
+    }
+    return null;
+  }
+
+  function deleteCookie() {
+    if (confirm("Bạn có chắc muốn xóa tất cả thông tin?")) {
+      document.cookie = "username=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
+      sessionStorage.clear();
+      location.reload();
+    }
+  }
+
+  function saveCookie() {
+    const v = usernameInput.value.trim();
+    if (!v) {
+      alert("Vui lòng nhập tên!");
+      return;
+    }
+    setCookie("username", v, 7);
+    location.reload();
+  }
+
+  function updateCookie() {
+    const newName = prompt("Nhập tên mới:", getCookie("username") || "");
+    if (newName && newName.trim()) {
+      setCookie("username", newName.trim(), 7);
+      location.reload();
+    }
+  }
+
+  // Enter để submit
+  usernameInput?.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") saveCookie();
+  });
+
+  const userSession = {
+    startTime: Date.now(),
+    pageViews: Number(sessionStorage.getItem("pageViews")) || 0,
+    lastActive: Date.now(),
+
+    getDuration() {
+      return Math.floor((Date.now() - this.startTime) / 1000);
+    },
+
+    incrementViews() {
+      this.pageViews++;
+      sessionStorage.setItem("pageViews", this.pageViews);
+    }
+  };
+
+  function updateLastActive() {
+    userSession.lastActive = Date.now();
+    sessionStorage.setItem("lastActive", userSession.lastActive);
+  }
+
+  ["click", "keydown", "mousemove"].forEach(e =>
+    document.addEventListener(e, updateLastActive)
+  );
+
+  function init() {
+    const username = getCookie("username");
+
+    if (!sessionStorage.getItem("startTime")) {
+      sessionStorage.setItem("startTime", userSession.startTime);
+    } else {
+      userSession.startTime = Number(sessionStorage.getItem("startTime"));
+    }
+
+    if (sessionStorage.getItem("lastActive")) {
+      userSession.lastActive = Number(sessionStorage.getItem("lastActive"));
+    } else {
+      sessionStorage.setItem("lastActive", userSession.lastActive);
+    }
+
+    userSession.incrementViews();
+
+    if (username) {
+      form.style.display = "none";
+      welcome.style.display = "block";
+      greeting.innerText = username;
+      views.innerText = userSession.pageViews;
+
+      setInterval(() => {
+        duration.innerText = userSession.getDuration();
+        lastActive.innerText =
+          new Date(userSession.lastActive).toLocaleTimeString('vi-VN');
+      }, 1000);
+    }
+  }
+
+  init();
+</script>
+
+</body>
+</html>
