@@ -7,3 +7,8 @@ Thông tin cá nhân
 Phân công
 - Tính năng: Profile
 - Nhánh: feature/profile
+
+Kỹ năng
+- HTML/CSS
+- JavaScript
+- Git & GitHub
