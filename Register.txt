@@ -1,4 +1,2 @@
 Đây là đăng ký 
 Thêm Đăng ký bằng google
-Thêm recaptcha vào 
-Nhưng lỗi
