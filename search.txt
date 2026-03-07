@@ -1,1 +1,2 @@
 Search feature for project
+Search commit functionality
